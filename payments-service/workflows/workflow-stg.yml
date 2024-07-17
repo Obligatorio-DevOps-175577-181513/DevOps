@@ -1,0 +1,28 @@
+name: Build on STG
+
+on:
+  push:
+    branches:
+      - branch-staging
+  repository_dispatch:
+    types:
+      - build-stg
+  workflow_dispatch:
+
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-stg:
+    uses: Obligatorio-DevOps-175577-181513/payments-service/.github/workflows/deploy-to-ecr.yml@branch-staging
+    with:
+      CI_ENV: staging
+      CONTENTFUL_ENVIRONMENT: 'staging'
+    secrets:
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_STG }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
