@@ -1,0 +1,28 @@
+name: Build on PRD
+
+on:
+  push:
+    branches:
+      - production
+  repository_dispatch:
+    types:
+      - build-prd
+  workflow_dispatch:
+
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-prd:
+    uses: Obligatorio-DevOps-175577-181513/payments-service/.github/workflows/deploy-to-ecr.yml@production
+    with:
+      CI_ENV: production
+      CONTENTFUL_ENVIRONMENT: 'production'
+    secrets:
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_PRD }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}

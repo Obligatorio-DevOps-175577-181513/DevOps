@@ -1,0 +1,28 @@
+name: Build on DEV
+
+on:
+  push:
+    branches:
+      - branch-develop
+  repository_dispatch:
+    types:
+      - build-dev
+  workflow_dispatch:
+
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-dev:
+    uses: Obligatorio-DevOps-175577-181513/payments-service/.github/workflows/deploy-to-ecr.yml@branch-develop
+    with:
+      CI_ENV: develop
+      CONTENTFUL_ENVIRONMENT: 'develop'
+    secrets:
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_DEV }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
